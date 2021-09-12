@@ -1,6 +1,6 @@
 //Left Leaning Red Black Tree as discussed in:
 //https://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf
-// (c) Max Goren 2020 MIT License
+// (c) Max Goren 2021 MIT License
 #include "bsttree.h"
 using namespace std;
 

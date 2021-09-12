@@ -9,7 +9,7 @@
 using namespace std;
 const int itemMIN = -66642069;
 const int itemMAX = 66642069;
-enum nodecolor { Red = true, black };
+enum nodecolor { RED = true, BLACK };
 
 template <typename k_t, typename v_t>
 class bstree {
@@ -22,7 +22,7 @@ class bstree {
      k_t key;
      v_t val;
      node() { }
-     node(int k) : key(k) { l = r = nullptr; color = Red; }
+     node(k_t k, v_t v, nodecolor c) : key(k), val(v), color(c) { l = r = nullptr;  }
      node(const node&) { }
   };
   node* root;
@@ -33,13 +33,21 @@ class bstree {
   node* fixUp(node* x);
   node* rotateLeft(node* x);
   node* rotateRight(node* x);
+  node* moveRedRight(node* x);
+  node* moveRedLeft(node* x);
+  void deleteMax();
+  void deleteMin();
   v_t getMin();
   v_t getMax();
   v_t find(k_t k);
   void flipColor(node*& x);// { x->color = !x->color; }
-  inline bool isRed(node* x) { return (x == nullptr) ? false:x->color == Red; }
+  inline bool isRed(node* x) { return (x == nullptr) ? false:x->color == RED; }
   void traverse(node* x);
   void count_right(node* x);
   void count_left(node* x);
   void count_sides();
+  private:
+  node* dMax(node* x);
+  node* dMin(node* x);
+
 };

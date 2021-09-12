@@ -36,8 +36,7 @@ void bstree<k_t, v_t>::insert(node** x, k_t key, v_t val)
   if (*x == nullptr)
   {
    // cout<<key<<" inserted\n";
-    *x = new node(key);
-    (*x)->val = val;
+    *x = new node(key, val, RED);
     return;
   }
   /* 2-3-4 tree
@@ -56,8 +55,6 @@ void bstree<k_t, v_t>::insert(node** x, k_t key, v_t val)
   }
   *x = fixUp(*x);
   /* 2-3 tree */
-  if (isRed((*x)->l) && isRed((*x)->r))
-      flipColor(*x);
 }
 
 template <typename k_t, typename v_t>
@@ -71,6 +68,8 @@ typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::fixUp(node* x)
     {
       x = rotateRight(x);
     }
+    if (isRed(x->l) && isRed(x->r))
+      flipColor(x);
     return x;
 }
 
@@ -81,7 +80,7 @@ typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::rotateLeft(node* x)
     x->r    = t->l;
     t->l    = x;
     t->color = t->l->color;
-    x->color = Red;
+    x->color = RED;
    cout<<"Left Rotation!!\n"; 
    return t;
 }
@@ -93,7 +92,7 @@ typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::rotateRight(node* x)
     x->l = t->r;
     t->r = x;
     t->color = t->r->color;
-    x->color = Red;
+    x->color = RED;
     cout<<"Right Rotation!!\n";
     return t;
 }
@@ -112,19 +111,76 @@ void bstree<k_t,v_t>::flipColor(node*& x)
 }
 
 template <typename k_t, typename v_t>
-v_t bstree<k_t,v_t>::getMin()
+typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::moveRedRight(node* x)
 {
-  node* x = root;
-  while (x != nullptr) x = x->l;
-  return x->val;
+    flipColor(x);
+    if (isRed(x->l->l))
+    {
+      x = rotateRight(x);
+      flipColor(x);
+    }
+    return x;
 }
 
 template <typename k_t, typename v_t>
-v_t bstree<k_t,v_t>::getMax()
+typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::moveRedLeft(node* x)
 {
-  node* x = root;
-  while (x != nullptr) x = x->l;
-  return x->val; 
+    flipColor(x);
+    if (isRed(x->r->l))
+    {
+      x->r = rotateRight(x->r);
+      x = rotateLeft(x);
+      flipColor(x);
+    }
+    return x;
+}
+
+template <typename k_t, typename v_t>
+typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::dMin(node* x)
+{
+  if (isRed(x->l))
+    x = rotateRight(x);
+
+  if (x->r == nullptr)
+    return nullptr;
+
+  if (!isRed(x->r) && !isRed(x->r->l))
+    x = moveRedRight(x);
+
+   x->l = dMax(x->l);
+
+   return fixUp(x);
+}
+
+template <typename k_t, typename v_t>
+typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::dMax(node* x)
+{
+  if (isRed(x->l))
+    x = rotateRight(x);
+
+  if (x->r == nullptr)
+    return nullptr;
+
+  if (!isRed(x->l) && !isRed(x->l->l))
+    x = moveRedLeft(x);
+
+   x->l = dMax(x->l);
+
+   return fixUp(x);
+}
+
+template <typename k_t, typename v_t>
+void bstree<k_t,v_t>::deleteMin()
+{
+   root = dMin(root);
+   root->color = BLACK;
+}
+
+template <typename k_t, typename v_t>
+void bstree<k_t,v_t>::deleteMax()
+{
+   root = dMax(root);
+   root->color = BLACK;
 }
 
 template <typename k_t, typename v_t>

@@ -3,33 +3,51 @@
 // (c) Max Goren 2020 MIT License
 #include "bsttree.h"
 using namespace std;
-int dep = 0; //sue me ;)
-bstree::bstree()
+
+template <typename k_t, typename v_t>
+bstree<k_t, v_t>::bstree()
 {
   this->root = nullptr;
 }
 
-void bstree::put(node** x, int key)
+template <typename k_t, typename v_t>
+v_t bstree<k_t,v_t>::find(k_t k)
 {
-  dep++;
+  v_t ret = nullptr;
+  node* x = root;
+  while (x != nullptr)
+  {
+   if (x->key == k)
+   {
+     ret = x->val;
+     break;
+   }
+   x = (k < x->key) ? x->l:x->r; 
+  }
+  return ret;
+}
+
+template <typename k_t, typename v_t>
+void bstree<k_t, v_t>::insert(node** x, k_t key, v_t val)
+{
   if (*x == nullptr)
   {
    // cout<<key<<" inserted\n";
     *x = new node(key);
-    (*x)->depth = dep;
+    (*x)->val = val;
     return;
   }
   if (key < (*x)->key) 
   {
-    put(&(*x)->l, key);
+    insert(&(*x)->l, key, val);
   } else {
-    put(&(*x)->r, key);
+    insert(&(*x)->r, key, val);
   }
   *x = fixUp(*x);
-  dep = 0;
 }
 
-bstree::node* bstree::fixUp(node* x)
+template <typename k_t, typename v_t>
+typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::fixUp(node* x)
 {
     if (isRed(x->r))
     {
@@ -44,7 +62,8 @@ bstree::node* bstree::fixUp(node* x)
     return x;
 }
 
-bstree::node* bstree::rotateLeft(node* x)
+template <typename k_t, typename v_t>
+typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::rotateLeft(node* x)
 {
     node* t = x->r;
     x->r = t->l;
@@ -55,7 +74,8 @@ bstree::node* bstree::rotateLeft(node* x)
    return t;
 }
 
-bstree::node* bstree::rotateRight(node* x)
+template <typename k_t, typename v_t>
+typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::rotateRight(node* x)
 {
     node* t = x->l;
     x->l = t->r;
@@ -66,7 +86,24 @@ bstree::node* bstree::rotateRight(node* x)
     return t;
 }
 
-void bstree::traverse(node* x)
+template <typename k_t, typename v_t>
+v_t bstree<k_t,v_t>::getMin()
+{
+  node* x = root;
+  while (x != nullptr) x = x->l;
+  return x->val;
+}
+
+template <typename k_t, typename v_t>
+v_t bstree<k_t,v_t>::getMax()
+{
+  node* x = root;
+  while (x != nullptr) x = x->l;
+  return x->val; 
+}
+
+template <typename k_t, typename v_t>
+void bstree<k_t,v_t>::traverse(node* x)
 {
  if (x != nullptr)
  {

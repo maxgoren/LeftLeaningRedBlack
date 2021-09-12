@@ -10,6 +10,8 @@ using namespace std;
 const int itemMIN = -66642069;
 const int itemMAX = 66642069;
 enum nodecolor { Red = true, black };
+
+template <typename k_t, typename v_t>
 class bstree {
   public:
   class node {
@@ -17,18 +19,21 @@ class bstree {
      node* l;
      node* r;
      bool color;
-     int key;
-     int depth;
+     k_t key;
+     v_t val;
      node() { }
      node(int k) : key(k) { l = r = nullptr; color = Red; }
      node(const node&) { }
   };
   node* root;
   bstree();
-  void put(node** x, int key);
+  void insert(node** x, k_t key, v_t val);
   node* fixUp(node* x);
   node* rotateLeft(node* x);
   node* rotateRight(node* x);
+  v_t getMin();
+  v_t getMax();
+  v_t find(k_t k);
   inline void flipColor(node*& x) { x->color = !x->color; }
   inline bool isRed(node* x) { return (x == nullptr) ? false:x->color == Red; }
   void traverse(node* x);

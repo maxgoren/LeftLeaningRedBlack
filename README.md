@@ -25,7 +25,6 @@ TODO:
 -----
 ```
  -implement delete();
- -modify node for key/value instead of just key
- -use templates to allow for generic types.
+ -test/test/test
  ```
  (C) Max Goren 2020 MIT License

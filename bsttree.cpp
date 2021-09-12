@@ -1,8 +1,11 @@
 //Left Leaning Red Black Tree as discussed in:
 //https://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf
-// (c) Max Goren 2021 MIT License
+// (c) Max Goren 2020 MIT License
 #include "bsttree.h"
 using namespace std;
+
+int right_count = 0;
+int left_count = 0;
 
 template <typename k_t, typename v_t>
 bstree<k_t, v_t>::bstree()
@@ -37,13 +40,24 @@ void bstree<k_t, v_t>::insert(node** x, k_t key, v_t val)
     (*x)->val = val;
     return;
   }
-  if (key < (*x)->key) 
+  /* 2-3-4 tree
+  if (isRed((*x)->l) && isRed((*x)->r))
+      flipColor(*x);
+  */
+  if (key == (*x)->key)
+  {
+     (*x)->val = val;
+  } 
+  else if (key < (*x)->key) 
   {
     insert(&(*x)->l, key, val);
   } else {
     insert(&(*x)->r, key, val);
   }
   *x = fixUp(*x);
+  /* 2-3 tree */
+  if (isRed((*x)->l) && isRed((*x)->r))
+      flipColor(*x);
 }
 
 template <typename k_t, typename v_t>
@@ -57,8 +71,6 @@ typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::fixUp(node* x)
     {
       x = rotateRight(x);
     }
-    if (isRed(x->l) && isRed(x->r))
-      flipColor(x);
     return x;
 }
 
@@ -66,10 +78,10 @@ template <typename k_t, typename v_t>
 typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::rotateLeft(node* x)
 {
     node* t = x->r;
-    x->r = t->l;
-    t->l = x;
+    x->r    = t->l;
+    t->l    = x;
     t->color = t->l->color;
-    t->l->color = Red;
+    x->color = Red;
    cout<<"Left Rotation!!\n"; 
    return t;
 }
@@ -81,9 +93,22 @@ typename bstree<k_t, v_t>::node* bstree<k_t,v_t>::rotateRight(node* x)
     x->l = t->r;
     t->r = x;
     t->color = t->r->color;
-    t->r->color = Red;
+    x->color = Red;
     cout<<"Right Rotation!!\n";
     return t;
+}
+
+template <typename k_t, typename v_t>
+void bstree<k_t,v_t>::flipColor(node*& x)
+{
+    x->color = !x->color;
+    if (x->r != nullptr)
+      x->r->color = !x->r->color;
+    
+    if (x->l != nullptr)
+      x->l->color = !x->l->color;
+    
+    cout<<"Color Flip!!\n";
 }
 
 template <typename k_t, typename v_t>
@@ -111,4 +136,38 @@ void bstree<k_t,v_t>::traverse(node* x)
    cout<<x->key<<" ";
    traverse(x->r);
  }
+}
+
+template <typename k_t, typename v_t>
+void bstree<k_t,v_t>::count_right(node* x)
+{
+ if (x != nullptr && x != root->l)
+ {
+  right_count++;
+  count_right(x->l);
+  count_right(x->r);
+ }
+}
+template <typename k_t, typename v_t>
+void bstree<k_t,v_t>::count_left(node* x)
+{
+ if (x != nullptr && x != root->r)
+ {
+   left_count++;
+   count_left(x->l);
+   count_right(x->r);
+ }
+}
+
+template <typename k_t, typename v_t>
+void bstree<k_t,v_t>::count_sides()
+{
+  left_count = 0;
+  right_count = 0;
+  count_right(root);
+  count_left(root);
+  cout<<"Nodes on left side: "<<left_count<<"\n";
+  cout<<"Nodes on right side: "<<right_count<<"\n";
+  left_count = 0;
+  right_count = 0;
 }

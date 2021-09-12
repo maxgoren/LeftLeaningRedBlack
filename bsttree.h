@@ -1,6 +1,6 @@
 //Left Leaning Red Black Tree as discussed in:
 //https://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf
-// (c) Max Goren 2021 MIT License
+// (c) Max Goren 2020 MIT License
 
 #include <iostream>
 #include <vector>
@@ -26,6 +26,8 @@ class bstree {
      node(const node&) { }
   };
   node* root;
+  int left_count;
+  int right_count;
   bstree();
   void insert(node** x, k_t key, v_t val);
   node* fixUp(node* x);
@@ -34,7 +36,10 @@ class bstree {
   v_t getMin();
   v_t getMax();
   v_t find(k_t k);
-  inline void flipColor(node*& x) { x->color = !x->color; }
+  void flipColor(node*& x);// { x->color = !x->color; }
   inline bool isRed(node* x) { return (x == nullptr) ? false:x->color == Red; }
   void traverse(node* x);
+  void count_right(node* x);
+  void count_left(node* x);
+  void count_sides();
 };

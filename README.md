@@ -22,8 +22,10 @@ test.cpp includes a level-order (breadth first) traversal of the tree, which one
 in-order traversal for a rough visual gauge of how well balanced the tree is.
 
 TODO:
+-----
+```
  -implement delete();
  -modify node for key/value instead of just key
  -use templates to allow for generic types.
- 
+ ```
  (C) Max Goren 2020 MIT License
